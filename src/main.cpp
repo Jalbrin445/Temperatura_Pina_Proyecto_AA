@@ -1,18 +1,35 @@
-#include <Arduino.h>
+#include <Arduino.h>   // <-- ESTO ES OBLIGATORIO EN PLATFORMIO
+#include "max6675.h"
 
-// put function declarations here:
-int myFunction(int, int);
+// Pines SPI compartidos por software/hardware
+const int pinSO  = 12;
+const int pinSCK = 13;
+
+// Pines de Selección de Chip (CS) independientes
+const int pinCS1 = 10; // Centro Piña
+const int pinCS2 = 9;  // Agua
+const int pinCS3 = 8;  // Superficie Piña
+
+// Instanciación de las 3 termocuplas
+MAX6675 termocuplaCentro(pinSCK, pinCS1, pinSO);
+MAX6675 termocuplaAgua(pinSCK, pinCS2, pinSO);
+MAX6675 termocuplaSuperficie(pinSCK, pinCS3, pinSO);
 
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+  Serial.begin(115200);
+  delay(500);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-}
+  float t_centro     = termocuplaCentro.readCelsius();
+  float t_agua       = termocuplaAgua.readCelsius();
+  float t_superficie = termocuplaSuperficie.readCelsius();
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+  Serial.print(t_centro);
+  Serial.print(",");
+  Serial.print(t_agua);
+  Serial.print(",");
+  Serial.println(t_superficie);
+
+  delay(1000); 
 }
